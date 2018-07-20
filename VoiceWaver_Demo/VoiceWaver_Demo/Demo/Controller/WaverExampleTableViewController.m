@@ -66,9 +66,10 @@
     self.tableView.tableHeaderView = [self headerView];
     
     
-    self.soundMeterCount = 20;
-    self.updateFequency = 0.05;
+    self.soundMeterCount = 35;
+    self.updateFequency = 0.5/self.soundMeterCount;
     
+//    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(postSound) userInfo:nil repeats:YES];
 }
 - (UIView *)headerView {
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 375, 200)];
@@ -226,29 +227,30 @@
 }
 - (void)addSoundMeter:(CGFloat)itemValue {
     
-    if (self.soundMeters.count > self.soundMeterCount) {
-        [self.soundMeters removeObjectAtIndex:0];
-    }
-    [self.soundMeters addObject:@(itemValue)];
+//    if (self.soundMeters.count > self.soundMeterCount) {
+//        [self.soundMeters removeObjectAtIndex:0];
+//    }
+//    [self.soundMeters addObject:@(itemValue)];
 
+//
+    if (self.soundMeters.count > self.soundMeterCount) {
+        [self.soundMeters removeAllObjects];
+    }else {
+        [self.soundMeters addObject:@(itemValue)];
+    }
+    if (self.soundMeters.count == self.soundMeterCount) {
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
+
+    }
+    
+    
+  
+}
+- (void)postSound {
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
 
-//
-//    if (self.soundMeters.count > self.soundMeterCount) {
-//
-//        [self.soundMeters removeAllObjects];
-//
-//    }else {
-//        [self.soundMeters addObject:@(itemValue)];
-//    }
-//    if (self.soundMeters.count == self.soundMeterCount) {
-//        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
-//
-//    }
-    
-    
-
-  
 }
 
 @end

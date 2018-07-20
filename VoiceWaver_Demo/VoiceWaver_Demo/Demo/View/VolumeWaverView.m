@@ -25,7 +25,6 @@
     if (self) {
         self.contentMode = UIViewContentModeRedraw;
         self.backgroundColor = [UIColor cyanColor];
-        
         //监听声波改变
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateView:) name:@"updateMeters" object:nil];
 
@@ -86,7 +85,6 @@
                 }
                 
             }
-                
                 
                 break;
                 
