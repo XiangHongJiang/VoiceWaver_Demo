@@ -66,10 +66,10 @@
     self.tableView.tableHeaderView = [self headerView];
     
     
-    self.soundMeterCount = 35;
-    self.updateFequency = 0.5/self.soundMeterCount;
+    self.soundMeterCount = 20;
+    self.updateFequency = 0.25/self.soundMeterCount;//0.5/self.soundMeterCount;
     
-//    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(postSound) userInfo:nil repeats:YES];
+    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(postSound) userInfo:nil repeats:YES];
 }
 - (UIView *)headerView {
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 375, 200)];
@@ -184,7 +184,6 @@
     [self.recorder updateMeters];
     self.recordTime += self.updateFequency;
     
-    
     float   level;                // The linear 0.0 .. 1.0 value we need.
     float   minDecibels = -80.0f; // Or use -60dB, which I measured in a silent room.
     float   decibels = [self.recorder averagePowerForChannel:0];
@@ -203,22 +202,15 @@
     
     else
     {
-        
         float   root            = 2.0f;
-        
         float   minAmp          = powf(10.0f, 0.05f * minDecibels);
-        
         float   inverseAmpRange = 1.0f / (1.0f - minAmp);
-        
         float   amp             = powf(10.0f, 0.05f * decibels);
-        
         float   adjAmp          = (amp - minAmp) * inverseAmpRange;
-        
         level = powf(adjAmp, 1.0f / root);
-        
     }
+    
     [self addSoundMeter:decibels];
-
    
     if (self.recordTime > 60.0) {
         //end
@@ -227,30 +219,31 @@
 }
 - (void)addSoundMeter:(CGFloat)itemValue {
     
-//    if (self.soundMeters.count > self.soundMeterCount) {
-//        [self.soundMeters removeObjectAtIndex:0];
-//    }
-//    [self.soundMeters addObject:@(itemValue)];
+    if (self.soundMeters.count > self.soundMeterCount - 1) {
+        [self.soundMeters removeObjectAtIndex:0];
+    }
+    [self.soundMeters addObject:@(itemValue)];
 
 //
-    if (self.soundMeters.count > self.soundMeterCount) {
-        [self.soundMeters removeAllObjects];
-    }else {
-        [self.soundMeters addObject:@(itemValue)];
-    }
-    if (self.soundMeters.count == self.soundMeterCount) {
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
-
-    }
-    
-    
+//    if (self.soundMeters.count > self.soundMeterCount - 1) {
+//        [self.soundMeters removeAllObjects];
+//    }else {
+//        [self.soundMeters addObject:@(itemValue)];
+//    }
+//    if (self.soundMeters.count == self.soundMeterCount) {
+//
+//        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
+//
+//    }
   
 }
 - (void)postSound {
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
-
+    if (self.soundMeters.count == self.soundMeterCount) {
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
+        
+    }
 }
 
 @end
