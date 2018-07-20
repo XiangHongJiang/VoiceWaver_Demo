@@ -69,7 +69,7 @@
     self.soundMeterCount = 20;
     self.updateFequency = 0.25/self.soundMeterCount;//0.5/self.soundMeterCount;
     
-    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(postSound) userInfo:nil repeats:YES];
+//    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(postSound) userInfo:nil repeats:YES];
 }
 - (UIView *)headerView {
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 375, 200)];
@@ -210,6 +210,8 @@
         level = powf(adjAmp, 1.0f / root);
     }
     
+    float aa = pow(10, (0.05 * [self.recorder averagePowerForChannel:0]));
+
     [self addSoundMeter:decibels];
    
     if (self.recordTime > 60.0) {
@@ -225,25 +227,26 @@
     [self.soundMeters addObject:@(itemValue)];
 
 //
-//    if (self.soundMeters.count > self.soundMeterCount - 1) {
-//        [self.soundMeters removeAllObjects];
-//    }else {
-//        [self.soundMeters addObject:@(itemValue)];
-//    }
+    if (self.soundMeters.count > self.soundMeterCount - 1) {
+        [self.soundMeters removeAllObjects];
+    }else {
+        [self.soundMeters addObject:@(itemValue)];
+    }
+    
+    if (self.soundMeters.count == self.soundMeterCount) {
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
+
+    }
+  
+}
+- (void)postSound {
+    
 //    if (self.soundMeters.count == self.soundMeterCount) {
 //
 //        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
 //
 //    }
-  
-}
-- (void)postSound {
-    
-    if (self.soundMeters.count == self.soundMeterCount) {
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
-        
-    }
 }
 
 @end
