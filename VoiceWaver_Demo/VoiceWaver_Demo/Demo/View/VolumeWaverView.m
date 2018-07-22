@@ -7,8 +7,21 @@
 //
 
 #import "VolumeWaverView.h"
+@interface VolumeWaverView()
+@property (strong, nonatomic) NSOperationQueue *queue;
+
+@end
+
 
 @implementation VolumeWaverView
+
+- (NSOperationQueue *)queue {
+    if (!_queue) {
+        _queue = [[NSOperationQueue alloc] init];
+        _queue.maxConcurrentOperationCount = 5;
+    }
+    return _queue;
+}
 
 - (instancetype)initWithFrame:(CGRect)frame andType:(VolumeWaverType)type {
 
@@ -36,7 +49,35 @@
 - (void)updateView:(NSNotification *)notice{
     
     self.soundMeters = notice.object;
-    [self setNeedsDisplay];
+//    [self setNeedsDisplay];
+}
+
+- (void)setSoundMeters:(NSArray *)soundMeters {
+    [self.queue addOperationWithBlock:^{
+    
+        NSArray *objectArray = soundMeters;
+        NSInteger count = objectArray.count;
+        
+        NSMutableArray *tempArray = [NSMutableArray arrayWithArray:objectArray];
+        NSMutableArray *valueArray = [NSMutableArray array];
+        int index = 0;
+        for (int i = 0; i < count; i ++) {
+            if (!tempArray.count) {
+                break;
+            }
+            index = arc4random() % tempArray.count;
+            NSNumber *value = tempArray[index];
+            if (![value isKindOfClass:[NSNumber class]]) {
+                continue;
+            }
+            [valueArray addObject:value];
+            [tempArray removeObjectAtIndex:index];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _soundMeters = valueArray;
+            [self setNeedsDisplay];
+        });
+    }];
 }
 - (void)drawRect:(CGRect)rect {
     
