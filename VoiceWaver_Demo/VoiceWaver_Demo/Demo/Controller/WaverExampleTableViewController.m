@@ -67,7 +67,7 @@
     
     
     self.soundMeterCount = 20;
-    self.updateFequency = 0.05;
+    self.updateFequency = 0.25/self.soundMeterCount;
     
 }
 - (UIView *)headerView {
@@ -226,25 +226,25 @@
 }
 - (void)addSoundMeter:(CGFloat)itemValue {
     
-    if (self.soundMeters.count > self.soundMeterCount) {
-        [self.soundMeters removeObjectAtIndex:0];
+//    if (self.soundMeters.count > self.soundMeterCount) {
+//        [self.soundMeters removeObjectAtIndex:0];
+//    }
+//    [self.soundMeters addObject:@(itemValue)];
+//
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
+
+//
+    if (self.soundMeters.count > self.soundMeterCount - 1) {
+
+        [self.soundMeters removeAllObjects];
+
     }
     [self.soundMeters addObject:@(itemValue)];
+    
+    if (self.soundMeters.count == self.soundMeterCount) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
-
-//
-//    if (self.soundMeters.count > self.soundMeterCount) {
-//
-//        [self.soundMeters removeAllObjects];
-//
-//    }else {
-//        [self.soundMeters addObject:@(itemValue)];
-//    }
-//    if (self.soundMeters.count == self.soundMeterCount) {
-//        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
-//
-//    }
+    }
     
     
 
