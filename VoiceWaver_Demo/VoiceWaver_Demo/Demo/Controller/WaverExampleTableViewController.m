@@ -57,6 +57,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+    
+    
     self.navigationItem.title = @"波形图";
     self.dataArray = @[@"启用",@"暂停",@"取消"];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"UITableViewCell"];
@@ -65,11 +68,9 @@
     
     self.tableView.tableHeaderView = [self headerView];
     
-    
-    self.soundMeterCount = 20;
-    self.updateFequency = 0.25/self.soundMeterCount;//0.5/self.soundMeterCount;
-    
-//    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(postSound) userInfo:nil repeats:YES];
+    self.soundMeterCount = Xcount;
+    self.updateFequency = 0.25/self.soundMeterCount;//0.5/self.soundMeterCount;//100毫秒刷新一次
+
 }
 - (UIView *)headerView {
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 375, 200)];
@@ -95,11 +96,11 @@
         //录音设置
         NSMutableDictionary *recordSetting = [[NSMutableDictionary alloc] init];
         //设置录音采样率(Hz) 如：AVSampleRateKey==8000/44100/96000（影响音频的质量）, 采样率必须要设为11025才能使转化成mp3格式后不会失真
-        [recordSetting setValue:[NSNumber numberWithFloat:44100] forKey:AVSampleRateKey];
+        [recordSetting setValue:[NSNumber numberWithFloat:11025] forKey:AVSampleRateKey];
         //录音的质量
         [recordSetting setValue:[NSNumber numberWithInt:AVAudioQualityLow] forKey:AVEncoderAudioQualityKey];
         //录音通道数  1 或 2 ，要转换成mp3格式必须为双通道 : 音轨
-        [recordSetting setValue:[NSNumber numberWithInt:2] forKey:AVNumberOfChannelsKey];
+        [recordSetting setValue:[NSNumber numberWithInt:1] forKey:AVNumberOfChannelsKey];
         //设置录音格式  AVFormatIDKey==kAudioFormatLinearPCM
         [recordSetting setValue:[NSNumber numberWithInt:kAudioFormatLinearPCM] forKey:AVFormatIDKey];
         //线性采样位数  8、16、24、32
@@ -184,36 +185,15 @@
     [self.recorder updateMeters];
     self.recordTime += self.updateFequency;
     
-    float   level;                // The linear 0.0 .. 1.0 value we need.
-    float   minDecibels = -80.0f; // Or use -60dB, which I measured in a silent room.
-    float   decibels = [self.recorder averagePowerForChannel:0];
-    
-    if (decibels < minDecibels)
-        
-    {
-        level = 0.0f;
-    }
-    
-    else if (decibels >= 0.0f)
-        
-    {
-        level = 1.0f;
-    }
-    
-    else
-    {
-        float   root            = 2.0f;
-        float   minAmp          = powf(10.0f, 0.05f * minDecibels);
-        float   inverseAmpRange = 1.0f / (1.0f - minAmp);
-        float   amp             = powf(10.0f, 0.05f * decibels);
-        float   adjAmp          = (amp - minAmp) * inverseAmpRange;
-        level = powf(adjAmp, 1.0f / root);
-    }
-    
-    float aa = pow(10, (0.05 * [self.recorder averagePowerForChannel:0]));
-
-    [self addSoundMeter:decibels];
+    //分贝值
+    float db = [self test2];
+//    [self test1];
+    [self test3];
    
+    //赋值
+    [self addSoundMeter:db];
+    
+   //结束
     if (self.recordTime > 60.0) {
         //end
         [self cancle];
@@ -221,22 +201,15 @@
 }
 - (void)addSoundMeter:(CGFloat)itemValue {
     
-    if (self.soundMeters.count > self.soundMeterCount - 1) {
-        [self.soundMeters removeObjectAtIndex:0];
-    }
-    [self.soundMeters addObject:@(itemValue)];
-
-//
-    if (self.soundMeters.count > self.soundMeterCount - 1) {
+    if (self.soundMeters.count > self.soundMeterCount - 1) {//清除
         [self.soundMeters removeAllObjects];
-    }else {
-        [self.soundMeters addObject:@(itemValue)];
     }
     
-    if (self.soundMeters.count == self.soundMeterCount) {
-
+    [self.soundMeters addObject:@(itemValue)];//收集
+   
+    if (self.soundMeters.count == self.soundMeterCount) {//刷新视图
+        
         [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
-
     }
   
 }
@@ -245,8 +218,64 @@
 //    if (self.soundMeters.count == self.soundMeterCount) {
 //
 //        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
-//
 //    }
+    
+}
+- (float)test1 {
+    float   level;
+    float   minDecibels = -60.0f;
+    float   decibels    = [self.recorder averagePowerForChannel:0];
+    if (decibels < minDecibels)    {
+        level = 0.0f;
+    }    else if (decibels >= 0.0f)    {
+        level = 1.0f;
+    }    else    {
+        float   root = 2.0f;
+        float   minAmp = powf(10.0f, 0.05f * minDecibels);
+        float   inverseAmpRange = 1.0f / (1.0f - minAmp);
+        float   amp = powf(10.0f, 0.05f * decibels);
+        float   adjAmp = (amp - minAmp) * inverseAmpRange;
+        level = powf(adjAmp, 1.0f / root);
+    }
+    double dB = level*85;
+    NSLog(@"dB = %f", dB);
+    
+    return dB;
+
+}
+
+- (float)test2 {// 0 ~ 110  
+    
+    float power = [self.recorder averagePowerForChannel:0];// -160  ~  0;
+    
+    CGFloat progress = (1.0 / 160.0) * (power + 160.0);// -160 ~ 0;
+    
+    power = power + 160  - 40;//  + 120?
+    
+    double dB = 0;
+    if (power < 0.f) {
+        dB = 0;
+    } else if (power < 40.f) {//0-35
+        dB = (int)(power * 0.875);
+    } else if (power < 100.f) {//25-85
+        dB = (int)(power - 15);
+    } else if (power < 110.f) {//85-110
+        dB = (int)(power * 2.5 - 165);
+    } else {
+        dB = 110;
+    }
+    
+    NSLog(@"progress = %f, dB = %f", progress, dB);
+    return dB;
+    
+}
+
+- (float)test3 {
+    CGFloat agv = pow(10, (0.05 * [self.recorder averagePowerForChannel:0]));
+    double dB = agv*100 ;
+    NSLog(@"test3: %f",dB);
+ 
+    return dB;
 }
 
 @end

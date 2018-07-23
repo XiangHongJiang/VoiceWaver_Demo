@@ -15,6 +15,9 @@ typedef NS_ENUM(NSInteger,VolumeWaverType){
 
 };
 
+#define Xcount 30
+#define Xmargin 8
+
 @interface VolumeWaverView : UIView
 
 /** 显示类型*/
