@@ -183,39 +183,7 @@
     [self.recorder updateMeters];
     self.recordTime += self.updateFequency;
     
-    
-    float   level;                // The linear 0.0 .. 1.0 value we need.
-    float   minDecibels = -80.0f; // Or use -60dB, which I measured in a silent room.
     float   decibels = [self.recorder averagePowerForChannel:0];
-    
-    if (decibels < minDecibels)
-        
-    {
-        level = 0.0f;
-    }
-    
-    else if (decibels >= 0.0f)
-        
-    {
-        level = 1.0f;
-    }
-    
-    else
-    {
-        
-        float   root            = 2.0f;
-        
-        float   minAmp          = powf(10.0f, 0.05f * minDecibels);
-        
-        float   inverseAmpRange = 1.0f / (1.0f - minAmp);
-        
-        float   amp             = powf(10.0f, 0.05f * decibels);
-        
-        float   adjAmp          = (amp - minAmp) * inverseAmpRange;
-        
-        level = powf(adjAmp, 1.0f / root);
-        
-    }
     [self addSoundMeter:decibels];
 
    
@@ -226,14 +194,6 @@
 }
 - (void)addSoundMeter:(CGFloat)itemValue {
     
-//    if (self.soundMeters.count > self.soundMeterCount) {
-//        [self.soundMeters removeObjectAtIndex:0];
-//    }
-//    [self.soundMeters addObject:@(itemValue)];
-//
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
-
-//
     if (self.soundMeters.count > self.soundMeterCount - 1) {
 
         [self.soundMeters removeAllObjects];

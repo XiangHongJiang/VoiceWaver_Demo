@@ -97,14 +97,16 @@
         switch (self.showType) {
             case VolumeWaverType_Bar:{
                 
-                CGFloat lineWidth = 10;
+                CGFloat lineWidth = (self.frame.size.width - (Xcount -1)*Xmargin )/Xcount;
+                
+                
                 CGContextSetLineWidth(context, lineWidth);
                 
                 for (int i = 0; i < self.soundMeters.count; i ++) {
                     
                     CGFloat soundValue = [self.soundMeters[self.soundMeters.count - i - 1] floatValue];
                     CGFloat barHeight = maxVolume - (soundValue - noVoice);
-                    CGPoint point = CGPointMake(i * lineWidth * 2 + lineWidth, 60);
+                    CGPoint point = CGPointMake(i * ( Xmargin + lineWidth), 60);
                     CGContextMoveToPoint(context, point.x, point.y);
                     CGContextAddLineToPoint(context, point.x, barHeight);
 
