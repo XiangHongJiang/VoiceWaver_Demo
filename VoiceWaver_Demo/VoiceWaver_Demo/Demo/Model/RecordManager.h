@@ -10,6 +10,12 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+typedef NS_ENUM(NSInteger, RecordValuePostType){
+    
+    RecordValuePostType_FullCount,//满个数传
+    RecordValuePostType_FullTime,//满时间传：单位时间, 移动视图下传次值
+};
+
 typedef void (^ReturnTimeCount)(NSTimer *timer,int second);
 
 @interface RecordManager : NSObject
@@ -32,8 +38,11 @@ typedef void (^ReturnTimeCount)(NSTimer *timer,int second);
 
 /** 文件存储地址*/
 @property (nonatomic, copy) NSString * filePath;
-/** 回调*/
+/** 倒计时回调*/
 @property (nonatomic, copy) ReturnTimeCount returnTime;
+
+/** 传值类型: 默认满个数传*/
+@property (nonatomic, assign) RecordValuePostType type;
 
 
 /** 录音工具的单例 */

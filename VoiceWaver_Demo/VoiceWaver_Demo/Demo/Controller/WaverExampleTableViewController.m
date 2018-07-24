@@ -50,14 +50,13 @@
         _recordTool = [RecordManager sharedRecordTool];
         //配置
         _recordTool.soundMeterCount = Xcount;
-        _recordTool.updateFequency = 0.25/Xcount;
+        _recordTool.updateFequency = 0.25;
         _recordTool.maxSecond = 60;
-        
         __weak typeof(self) weakSelf = self;
 
         _recordTool.returnTime = ^(NSTimer *timer,int second) {
 
-          weakSelf.timeLabel.text =  [NSString stringWithFormat:@"00:00:%2d", second];
+          weakSelf.timeLabel.text =  [NSString stringWithFormat:@"00:00:%02d", second];
         };
 
     }
@@ -68,6 +67,7 @@
     
     if (_volume == nil) {
         _volume = [[VolumeWaverView alloc] initWithFrame:CGRectMake(10, 70, 355, 150) andType:VolumeWaverType_Bar];
+        
     }
     return _volume;
 }
@@ -76,7 +76,7 @@
     [super viewDidLoad];
     
     self.navigationItem.title = @"波形图";
-    self.dataArray = @[@"启用",@"暂停",@"取消"];
+    self.dataArray = @[@"启用",@"暂停",@"取消",@"切换类型"];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"UITableViewCell"];
         
     self.tableView.tableHeaderView = [self headerView];
@@ -131,6 +131,9 @@
         case 2:
             [self cancle];
             break;
+        case 3:
+            [self changeType];
+            break;
         default:
             break;
     }
@@ -150,8 +153,52 @@
 }
 - (void)cancle {
     
-    [self.recordTool pauseRecord];
+    [self.recordTool cancleRecord];
     
+}
+- (void)changeType {
+    
+    static NSInteger type = 0;
+    
+    if (type < 2) {
+        type ++;
+    }else {
+        type = 0;
+    }
+    
+    [self cancle];
+    
+    switch (type) {
+        case 0:// VolumeWaverType_Bar,//跳动均衡器
+        {
+            self.recordTool.type = RecordValuePostType_FullCount;
+            self.recordTool.updateFequency = 0.25;
+            self.volume.showType = VolumeWaverType_Bar;
+
+        }
+            break;
+        case 1:// VolumeWaverType_BarMove,//移动
+        {
+            self.recordTool.type = RecordValuePostType_FullTime;
+            self.recordTool.updateFequency = 0.05;
+            self.volume.showType = VolumeWaverType_BarMove;
+
+        }
+            break;
+        case 2:// VolumeWaverType_Line,//顺序
+        {
+            self.recordTool.type = RecordValuePostType_FullTime;
+            self.recordTool.updateFequency = 0.05;
+            self.volume.showType = VolumeWaverType_Line;
+
+        }
+            break;
+            
+        default:
+            break;
+    }
+    
+    [self start];
 }
 
 

@@ -13,12 +13,10 @@
 
 @property (strong, nonatomic) NSOperationQueue *queue;
 
-/** <#desc#>*/
+/** 网格*/
 @property (nonatomic, strong) GridsView * gridsView;
 
 @end
-
-
 
 @implementation VolumeWaverView
 
@@ -26,7 +24,9 @@
     
     if (_gridsView == nil) {
         _gridsView = [[GridsView alloc] initWithFrame:self.bounds];
-        [_gridsView configLineWidth:Xmargin andXcount:Xcount yCount:10];
+        CGFloat lineWidth = (self.frame.size.width - (Xcount -1)*Xmargin )/Xcount;
+        NSInteger ycount = (self.bounds.size.height - Xmargin) / lineWidth;//尽量保证为矩形，也可以自己给个数，随意调整高度
+        [_gridsView configLineWidth:Xmargin andXcount:Xcount yCount:ycount];
 
     }
     return _gridsView;
@@ -45,6 +45,10 @@
     if (self = [self initWithFrame:frame]) {
         
         self.showType = type;
+        if (type == VolumeWaverType_Bar) {
+            [self addSubview: self.gridsView];
+        }
+
     }
     return self;
     
@@ -66,10 +70,16 @@
 - (void)updateView:(NSNotification *)notice{
     
     self.soundMeters = notice.object;
-//    [self setNeedsDisplay];
 }
 
 - (void)setSoundMeters:(NSArray *)soundMeters {
+    
+    if (self.showType == VolumeWaverType_Line || self.showType == VolumeWaverType_BarMove) {
+        
+        _soundMeters = soundMeters;
+        [self setNeedsDisplay];
+        return;
+    }
     [self.queue addOperationWithBlock:^{
     
         NSArray *objectArray = soundMeters;
@@ -114,13 +124,12 @@
         CGFloat range = maxVolume - noVoice;
         
         switch (self.showType) {
+            case VolumeWaverType_BarMove:
             case VolumeWaverType_Bar:{
                 
                 CGFloat lineWidth = (self.frame.size.width - (Xcount -1)*Xmargin )/Xcount;
                 //线宽
                 CGContextSetLineWidth(context, lineWidth);
-                
-//                UIBezierPath *path = [UIBezierPath bezierPath];//
                 
                 for (int i = 0; i < self.soundMeters.count; i ++) {
                     
@@ -130,34 +139,37 @@
                     
                     CGPoint point = CGPointMake(i * ( Xmargin + lineWidth)+ lineWidth *0.5, rect.size.height);
                   
-//                    [path moveToPoint:point];
-//                    [path addLineToPoint:CGPointMake(point.x, barHeight)];
                     
                     CGContextMoveToPoint(context, point.x, point.y);
                     CGContextAddLineToPoint(context, point.x,  point.y - barHeight);
 
                 }
                 
-                //添加
-//                CGContextAddPath(context, path.CGPath);
                 
             }
                 break;
                 
             case VolumeWaverType_Line:{
                 
-//                CGFloat lineWidth = 1.5;
-//                CGContextSetLineWidth(context, lineWidth);
-//                for (int i = 0; i < self.soundMeters.count; i ++) {
-//
-//                    CGFloat soundValue = [self.soundMeters[i] floatValue];
-//                    CGFloat barHeight = maxVolume - (soundValue - noVoice);
-//
-//                    CGPoint point = CGPointMake(i * lineWidth * 2 + lineWidth, rect.size.height);
-//                    CGContextAddLineToPoint(context, point.x, barHeight);
-//                    CGContextMoveToPoint(context, point.x, barHeight);
+                CGFloat lineWidth = 1.5;
+                
+                CGFloat lineSpace = rect.size.width / (Xcount - 1);
 
-//                }
+                CGContextSetLineWidth(context, lineWidth);
+                CGContextMoveToPoint(context, 0, rect.size.height);
+
+                for (int i = 0; i < self.soundMeters.count; i ++) {
+
+                    CGFloat soundValue = [self.soundMeters[i] floatValue];
+                    CGFloat rate = (soundValue - noVoice)/range;
+                    CGFloat barHeight = rect.size.height * rate;
+                    
+                    CGPoint point = CGPointMake(i * lineSpace, rect.size.height);
+
+                    CGContextAddLineToPoint(context, point.x,point.y - barHeight);
+                    CGContextMoveToPoint(context, point.x,point.y - barHeight);
+
+                }
                 
             }
                 
@@ -169,7 +181,12 @@
         
         CGContextStrokePath(context);
         
-        [self addSubview: self.gridsView];
+        /** 是否添加网格线*/
+        if (self.showType == VolumeWaverType_Bar) {
+                [self addSubview: self.gridsView];
+        }else {
+            [self.gridsView removeFromSuperview];
+        }
         
     }
     

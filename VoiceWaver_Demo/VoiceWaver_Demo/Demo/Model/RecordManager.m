@@ -26,8 +26,11 @@ static RecordManager *shareRecord = nil;
 - (NSTimer *)timer {
     
     if (_timer == nil) {
-     
-        _timer = [NSTimer scheduledTimerWithTimeInterval:self.updateFequency target:self selector:@selector(updateMeters) userInfo:nil repeats:YES];
+        CGFloat time = self.updateFequency;
+        if (self.type == RecordValuePostType_FullCount) {
+          time = self.updateFequency /self.soundMeterCount;
+        }
+        _timer = [NSTimer scheduledTimerWithTimeInterval:time target:self selector:@selector(updateMeters) userInfo:nil repeats:YES];
         
     }
     return _timer;
@@ -72,9 +75,10 @@ static RecordManager *shareRecord = nil;
 - (void)initial {
     
     self.soundMeterCount = 3;
-    self.updateFequency = 0.25/self.soundMeterCount;
+    self.updateFequency = 0.25;
     self.maxSecond = 60;
     self.count = self.maxSecond;
+    self.type = RecordValuePostType_FullCount;
     
     [self configRecord];
 
@@ -119,7 +123,6 @@ static RecordManager *shareRecord = nil;
     }
 }
 #pragma mark - Setter and Getter
-
 - (NSURL *)url {
  
     NSURL *url =  [NSURL fileURLWithPath:self.filePath];
@@ -168,12 +171,18 @@ static RecordManager *shareRecord = nil;
     
     [self.recorder stop];
     self.recordTime = 0;
+    self.count = self.maxSecond;
 }
 #pragma mark -  Timmer
 - (void)updateMeters {
     
     [self.recorder updateMeters];
-    self.recordTime += self.updateFequency;
+    if (self.type == RecordValuePostType_FullTime) {
+        self.recordTime += self.updateFequency;
+
+    }else {
+        self.recordTime += (self.updateFequency/self.soundMeterCount);
+    }
     
     float   decibels = [self.recorder averagePowerForChannel:0];
     [self addSoundMeter:decibels];
@@ -185,16 +194,27 @@ static RecordManager *shareRecord = nil;
 }
 - (void)addSoundMeter:(CGFloat)itemValue {
     
-    if (self.soundMeters.count > self.soundMeterCount - 1) {
-        
-        [self.soundMeters removeAllObjects];
-        
-    }
-    [self.soundMeters addObject:@(itemValue)];
+        if (self.soundMeters.count > self.soundMeterCount - 1) {
+            
+            if (self.type == RecordValuePostType_FullCount) {
+                [self.soundMeters removeAllObjects];
+            }else {
+                [self.soundMeters removeObjectAtIndex:0];
+            }
+        }
     
-    if (self.soundMeters.count == self.soundMeterCount) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
+        [self.soundMeters addObject:@(itemValue)];
+    
+    if (self.type == RecordValuePostType_FullTime) {
         
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
+
+    }else {
+        
+        if (self.soundMeters.count == self.soundMeterCount) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
+
+        }
     }
     
 }
