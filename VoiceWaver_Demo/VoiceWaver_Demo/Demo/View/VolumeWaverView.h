@@ -10,12 +10,16 @@
 
 typedef NS_ENUM(NSInteger,VolumeWaverType){
     
-    VolumeWaverType_Bar,
-    VolumeWaverType_Line,
+    VolumeWaverType_Bar,//跳动均衡器
+    VolumeWaverType_BarMove,//移动
+    VolumeWaverType_Line,//顺序
 
 };
 
 @interface VolumeWaverView : UIView
+
+#define Xcount 30
+#define Xmargin 1
 
 /** 显示类型*/
 @property (nonatomic, assign) VolumeWaverType showType;//bar line

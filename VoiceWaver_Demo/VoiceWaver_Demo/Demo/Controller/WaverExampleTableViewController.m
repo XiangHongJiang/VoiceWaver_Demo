@@ -11,45 +11,63 @@
 #import "VolumeWaverView.h"
 #import <AVFoundation/AVFoundation.h>
 
-@interface WaverExampleTableViewController ()<AVAudioRecorderDelegate>
+#import "RecordManager.h"
+
+@interface WaverExampleTableViewController ()
 
 /** 音频视图*/
 @property (nonatomic, strong) VolumeWaverView * volume;
 
-/** AVAudioRecorder*/
-@property (nonatomic, strong) AVAudioRecorder * recorder;
-/** timer录音计时器*/
-@property (nonatomic, strong) NSTimer * timer;
-/** updateFequency波形更新间隔*/
-@property (nonatomic, assign) CGFloat updateFequency;
-/** recordTime录音时间*/
-@property (nonatomic, assign) CGFloat recordTime;
-/** soundMeterCount声音数据数组容量*/
-@property (nonatomic, assign) NSInteger soundMeterCount;
-/** soundMeters声音数据数组*/
-@property (nonatomic, strong) NSMutableArray * soundMeters;
-
+/** 录音工具*/
+@property (nonatomic, strong) RecordManager *recordTool;
 
 /** 数据Array*/
 @property (nonatomic, copy) NSArray * dataArray;
+
+/** timeLabel*/
+@property (nonatomic, strong) UILabel * timeLabel;
+
 
 @end
 
 
 @implementation WaverExampleTableViewController
 
-- (NSMutableArray *)soundMeters {
-    
-    if (_soundMeters == nil) {
-        _soundMeters = [NSMutableArray new];
+- (UILabel *)timeLabel {
+    if (_timeLabel == nil) {
+        UILabel *timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 375, 20)];
+        timeLabel.textColor = [UIColor blackColor];
+        timeLabel.textAlignment = NSTextAlignmentCenter;
+        _timeLabel = timeLabel;
     }
-    return _soundMeters;
+    return _timeLabel;
+ 
+}
+
+- (RecordManager *)recordTool {
+    
+    if (_recordTool == nil) {
+        _recordTool = [RecordManager sharedRecordTool];
+        //配置
+        _recordTool.soundMeterCount = Xcount;
+        _recordTool.updateFequency = 0.25;
+        _recordTool.maxSecond = 60;
+        __weak typeof(self) weakSelf = self;
+
+        _recordTool.returnTime = ^(NSTimer *timer,int second) {
+
+          weakSelf.timeLabel.text =  [NSString stringWithFormat:@"00:00:%02d", second];
+        };
+
+    }
+    return _recordTool;
 }
 
 - (VolumeWaverView *)volume {
     
     if (_volume == nil) {
-        _volume = [[VolumeWaverView alloc] initWithFrame:CGRectMake(0, 70, 375, 60) andType:VolumeWaverType_Bar];
+        _volume = [[VolumeWaverView alloc] initWithFrame:CGRectMake(10, 70, 355, 150) andType:VolumeWaverType_Bar];
+        
     }
     return _volume;
 }
@@ -58,76 +76,29 @@
     [super viewDidLoad];
     
     self.navigationItem.title = @"波形图";
-    self.dataArray = @[@"启用",@"暂停",@"取消"];
+    self.dataArray = @[@"启用",@"暂停",@"取消",@"切换类型"];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"UITableViewCell"];
-    
-    [self configRecorder];
-    
+        
     self.tableView.tableHeaderView = [self headerView];
+    [self.tableView addSubview:self.volume];
     
-    
-    self.soundMeterCount = 20;
-    self.updateFequency = 0.05;
     
 }
 - (UIView *)headerView {
-    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 375, 200)];
+    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 375, 150+ 70)];
     contentView.backgroundColor = [UIColor whiteColor];
-    [contentView addSubview:self.volume];
+
+    [contentView addSubview:self.timeLabel];
+//    [contentView addSubview:self.volume];
     return contentView;
     
-}
-- (void)configRecorder {
-    
-    //判断是否可用
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    NSError *sessionError;
-    [session requestRecordPermission:^(BOOL granted) {
-        if (!granted) {
-            return;
-        }
-    }];
-    
-    if( [session setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:&sessionError]){
-        NSLog(@"session config Succeed");
-        
-        //录音设置
-        NSMutableDictionary *recordSetting = [[NSMutableDictionary alloc] init];
-        //设置录音采样率(Hz) 如：AVSampleRateKey==8000/44100/96000（影响音频的质量）, 采样率必须要设为11025才能使转化成mp3格式后不会失真
-        [recordSetting setValue:[NSNumber numberWithFloat:44100] forKey:AVSampleRateKey];
-        //录音的质量
-        [recordSetting setValue:[NSNumber numberWithInt:AVAudioQualityLow] forKey:AVEncoderAudioQualityKey];
-        //录音通道数  1 或 2 ，要转换成mp3格式必须为双通道 : 音轨
-        [recordSetting setValue:[NSNumber numberWithInt:2] forKey:AVNumberOfChannelsKey];
-        //设置录音格式  AVFormatIDKey==kAudioFormatLinearPCM
-        [recordSetting setValue:[NSNumber numberWithInt:kAudioFormatLinearPCM] forKey:AVFormatIDKey];
-        //线性采样位数  8、16、24、32
-        [recordSetting setValue:[NSNumber numberWithInt:16] forKey:AVLinearPCMBitDepthKey];
-
-        self.recorder = [[AVAudioRecorder alloc] initWithURL:[self url] settings:recordSetting error:nil];
-
-        self.recorder.delegate = self;
-        [self.recorder prepareToRecord];
-        [self.recorder setMeteringEnabled:YES];
-        [session setActive:YES error:nil];
-        
-    }else {
-        NSLog(@"session config failed");
-    }
-
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (NSURL *)url {
-    NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-    NSString *filePath = [path stringByAppendingPathComponent:@"test_voice.caf"];
-    NSURL *url =  [NSURL fileURLWithPath:filePath];
-    NSLog(@"filePath:\n%@",filePath);
-    return url;
-}
+
 
 #pragma mark - Table view data source
 
@@ -160,6 +131,9 @@
         case 2:
             [self cancle];
             break;
+        case 3:
+            [self changeType];
+            break;
         default:
             break;
     }
@@ -167,88 +141,66 @@
 }
 #pragma mark - Action
 - (void)start {
-    if (!self.recorder) return;
+
+    [self.recordTool startRecord];
     
-    [self.recorder record];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:self.updateFequency target:self selector:@selector(updateMeters) userInfo:nil repeats:YES];
 }
 - (void)pause {
+    
+
+    [self.recordTool pauseRecord];
     
 }
 - (void)cancle {
     
+    [self.recordTool cancleRecord];
+    
 }
-- (void)updateMeters {
+- (void)changeType {
     
-    [self.recorder updateMeters];
-    self.recordTime += self.updateFequency;
+    static NSInteger type = 0;
     
-    
-    float   level;                // The linear 0.0 .. 1.0 value we need.
-    float   minDecibels = -80.0f; // Or use -60dB, which I measured in a silent room.
-    float   decibels = [self.recorder averagePowerForChannel:0];
-    
-    if (decibels < minDecibels)
-        
-    {
-        level = 0.0f;
+    if (type < 2) {
+        type ++;
+    }else {
+        type = 0;
     }
     
-    else if (decibels >= 0.0f)
-        
-    {
-        level = 1.0f;
-    }
+    [self cancle];
     
-    else
-    {
-        
-        float   root            = 2.0f;
-        
-        float   minAmp          = powf(10.0f, 0.05f * minDecibels);
-        
-        float   inverseAmpRange = 1.0f / (1.0f - minAmp);
-        
-        float   amp             = powf(10.0f, 0.05f * decibels);
-        
-        float   adjAmp          = (amp - minAmp) * inverseAmpRange;
-        
-        level = powf(adjAmp, 1.0f / root);
-        
-    }
-    [self addSoundMeter:decibels];
+    switch (type) {
+        case 0:// VolumeWaverType_Bar,//跳动均衡器
+        {
+            self.recordTool.type = RecordValuePostType_FullCount;
+            self.recordTool.updateFequency = 0.25;
+            self.volume.showType = VolumeWaverType_Bar;
 
-   
-    if (self.recordTime > 60.0) {
-        //end
-        [self cancle];
+        }
+            break;
+        case 1:// VolumeWaverType_BarMove,//移动
+        {
+            self.recordTool.type = RecordValuePostType_FullTime;
+            self.recordTool.updateFequency = 0.05;
+            self.volume.showType = VolumeWaverType_BarMove;
+
+        }
+            break;
+        case 2:// VolumeWaverType_Line,//顺序
+        {
+            self.recordTool.type = RecordValuePostType_FullTime;
+            self.recordTool.updateFequency = 0.05;
+            self.volume.showType = VolumeWaverType_Line;
+
+        }
+            break;
+            
+        default:
+            break;
     }
+    
+    [self start];
 }
-- (void)addSoundMeter:(CGFloat)itemValue {
-    
-    if (self.soundMeters.count > self.soundMeterCount) {
-        [self.soundMeters removeObjectAtIndex:0];
-    }
-    [self.soundMeters addObject:@(itemValue)];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
 
-//
-//    if (self.soundMeters.count > self.soundMeterCount) {
-//
-//        [self.soundMeters removeAllObjects];
-//
-//    }else {
-//        [self.soundMeters addObject:@(itemValue)];
-//    }
-//    if (self.soundMeters.count == self.soundMeterCount) {
-//        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
-//
-//    }
-    
-    
-
-  
-}
 
 @end

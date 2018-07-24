@@ -17,6 +17,9 @@
 		FC6579362101709400055C91 /* VoiceWaver_DemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC6579352101709400055C91 /* VoiceWaver_DemoUITests.m */; };
 		FC657948210170C600055C91 /* WaverExampleTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC657947210170C600055C91 /* WaverExampleTableViewController.m */; };
 		FC65794B2101797B00055C91 /* VolumeWaverView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC65794A2101797B00055C91 /* VolumeWaverView.m */; };
+		FC8B936F2106B497006F30FF /* GridsView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8B936E2106B497006F30FF /* GridsView.m */; };
+		FC8B93722106EC1F006F30FF /* CrashManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8B93712106EC1F006F30FF /* CrashManager.m */; };
+		FC8B937D2106F0A7006F30FF /* RecordManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8B937C2106F0A7006F30FF /* RecordManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +60,12 @@
 		FC657947210170C600055C91 /* WaverExampleTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WaverExampleTableViewController.m; sourceTree = "<group>"; };
 		FC6579492101797B00055C91 /* VolumeWaverView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VolumeWaverView.h; sourceTree = "<group>"; };
 		FC65794A2101797B00055C91 /* VolumeWaverView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VolumeWaverView.m; sourceTree = "<group>"; };
+		FC8B936D2106B497006F30FF /* GridsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridsView.h; sourceTree = "<group>"; };
+		FC8B936E2106B497006F30FF /* GridsView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GridsView.m; sourceTree = "<group>"; };
+		FC8B93702106EC1F006F30FF /* CrashManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrashManager.h; sourceTree = "<group>"; };
+		FC8B93712106EC1F006F30FF /* CrashManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CrashManager.m; sourceTree = "<group>"; };
+		FC8B937B2106F0A7006F30FF /* RecordManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordManager.h; sourceTree = "<group>"; };
+		FC8B937C2106F0A7006F30FF /* RecordManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +126,8 @@
 				FC65791C2101709400055C91 /* LaunchScreen.storyboard */,
 				FC65791F2101709400055C91 /* Info.plist */,
 				FC6579202101709400055C91 /* main.m */,
+				FC8B93702106EC1F006F30FF /* CrashManager.h */,
+				FC8B93712106EC1F006F30FF /* CrashManager.m */,
 			);
 			path = VoiceWaver_Demo;
 			sourceTree = "<group>";
@@ -142,6 +153,7 @@
 		FC6579432101709800055C91 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				FC8B937A2106F082006F30FF /* Model */,
 				FC657945210170A700055C91 /* View */,
 				FC657944210170A000055C91 /* Controller */,
 			);
@@ -162,8 +174,19 @@
 			children = (
 				FC6579492101797B00055C91 /* VolumeWaverView.h */,
 				FC65794A2101797B00055C91 /* VolumeWaverView.m */,
+				FC8B936D2106B497006F30FF /* GridsView.h */,
+				FC8B936E2106B497006F30FF /* GridsView.m */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		FC8B937A2106F082006F30FF /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				FC8B937B2106F0A7006F30FF /* RecordManager.h */,
+				FC8B937C2106F0A7006F30FF /* RecordManager.m */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -303,6 +326,9 @@
 				FC65794B2101797B00055C91 /* VolumeWaverView.m in Sources */,
 				FC6579162101709400055C91 /* ViewController.m in Sources */,
 				FC6579212101709400055C91 /* main.m in Sources */,
+				FC8B937D2106F0A7006F30FF /* RecordManager.m in Sources */,
+				FC8B93722106EC1F006F30FF /* CrashManager.m in Sources */,
+				FC8B936F2106B497006F30FF /* GridsView.m in Sources */,
 				FC6579132101709400055C91 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -467,7 +493,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EA72JG3VB5;
 				INFOPLIST_FILE = VoiceWaver_Demo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "MrYeL.VoiceWaver-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -480,7 +508,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EA72JG3VB5;
 				INFOPLIST_FILE = VoiceWaver_Demo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "MrYeL.VoiceWaver-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";

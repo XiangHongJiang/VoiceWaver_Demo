@@ -18,5 +18,9 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>需要打开麦克风才能录音</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>需要使用音频</string>
 </dict>
 </plist>
