@@ -108,8 +108,10 @@
         // 颜色
         CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
         
-        CGFloat noVoice = -46.0;// 该值代表低于-46.0的声音都认为无声音
-        CGFloat maxVolume = 55.0; // 该值代表最高声音为55.0
+        CGFloat noVoice = -80.0;// 该值代表低于 x 的声音都认为无声音
+        CGFloat maxVolume = 0; // 该值代表最高声音为 x
+   
+        CGFloat range = maxVolume - noVoice;
         
         switch (self.showType) {
             case VolumeWaverType_Bar:{
@@ -123,14 +125,16 @@
                 for (int i = 0; i < self.soundMeters.count; i ++) {
                     
                     CGFloat soundValue = [self.soundMeters[self.soundMeters.count - i - 1] floatValue];
-                    CGFloat barHeight = maxVolume - (soundValue - noVoice);
+                    CGFloat rate = (soundValue - noVoice)/range;
+                    CGFloat barHeight = rect.size.height * rate;
+                    
                     CGPoint point = CGPointMake(i * ( Xmargin + lineWidth)+ lineWidth *0.5, rect.size.height);
                   
 //                    [path moveToPoint:point];
 //                    [path addLineToPoint:CGPointMake(point.x, barHeight)];
                     
                     CGContextMoveToPoint(context, point.x, point.y);
-                    CGContextAddLineToPoint(context, point.x, barHeight);
+                    CGContextAddLineToPoint(context, point.x,  point.y - barHeight);
 
                 }
                 
