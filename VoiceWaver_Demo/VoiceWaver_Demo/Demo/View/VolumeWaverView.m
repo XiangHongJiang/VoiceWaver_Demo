@@ -118,7 +118,7 @@
                 //线宽
                 CGContextSetLineWidth(context, lineWidth);
                 
-                UIBezierPath *path = [UIBezierPath bezierPath];//
+//                UIBezierPath *path = [UIBezierPath bezierPath];//
                 
                 for (int i = 0; i < self.soundMeters.count; i ++) {
                     
@@ -126,16 +126,16 @@
                     CGFloat barHeight = maxVolume - (soundValue - noVoice);
                     CGPoint point = CGPointMake(i * ( Xmargin + lineWidth)+ lineWidth *0.5, rect.size.height);
                   
-                    [path moveToPoint:point];
-                    [path addLineToPoint:CGPointMake(point.x, barHeight)];
+//                    [path moveToPoint:point];
+//                    [path addLineToPoint:CGPointMake(point.x, barHeight)];
                     
-//                    CGContextMoveToPoint(context, point.x, point.y);
-//                    CGContextAddLineToPoint(context, point.x, barHeight);
+                    CGContextMoveToPoint(context, point.x, point.y);
+                    CGContextAddLineToPoint(context, point.x, barHeight);
 
                 }
                 
                 //添加
-                CGContextAddPath(context, path.CGPath);
+//                CGContextAddPath(context, path.CGPath);
                 
             }
                 break;
@@ -169,6 +169,9 @@
         
     }
     
-   
+}
+- (void)dealloc {
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 @end

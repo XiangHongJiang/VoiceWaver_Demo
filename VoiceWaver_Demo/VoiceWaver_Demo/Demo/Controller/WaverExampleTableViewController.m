@@ -176,13 +176,17 @@
 }
 - (void)pause {
     
+    [self.timer invalidate];
+    self.timer = nil;
+    [self.recorder stop];
+    
 }
 - (void)cancle {
     
     [self.timer invalidate];
     self.timer = nil;
     [self.recorder stop];
-    
+    self.recordTime = 0;
     
 }
 
@@ -213,9 +217,6 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"updateMeters" object:self.soundMeters];
 
     }
-    
-    
-
   
 }
 

@@ -18,6 +18,7 @@
 		FC657948210170C600055C91 /* WaverExampleTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC657947210170C600055C91 /* WaverExampleTableViewController.m */; };
 		FC65794B2101797B00055C91 /* VolumeWaverView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC65794A2101797B00055C91 /* VolumeWaverView.m */; };
 		FC8B936F2106B497006F30FF /* GridsView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8B936E2106B497006F30FF /* GridsView.m */; };
+		FC8B93722106EC1F006F30FF /* CrashManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8B93712106EC1F006F30FF /* CrashManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,8 @@
 		FC65794A2101797B00055C91 /* VolumeWaverView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VolumeWaverView.m; sourceTree = "<group>"; };
 		FC8B936D2106B497006F30FF /* GridsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridsView.h; sourceTree = "<group>"; };
 		FC8B936E2106B497006F30FF /* GridsView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GridsView.m; sourceTree = "<group>"; };
+		FC8B93702106EC1F006F30FF /* CrashManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrashManager.h; sourceTree = "<group>"; };
+		FC8B93712106EC1F006F30FF /* CrashManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CrashManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +123,8 @@
 				FC65791C2101709400055C91 /* LaunchScreen.storyboard */,
 				FC65791F2101709400055C91 /* Info.plist */,
 				FC6579202101709400055C91 /* main.m */,
+				FC8B93702106EC1F006F30FF /* CrashManager.h */,
+				FC8B93712106EC1F006F30FF /* CrashManager.m */,
 			);
 			path = VoiceWaver_Demo;
 			sourceTree = "<group>";
@@ -308,6 +313,7 @@
 				FC65794B2101797B00055C91 /* VolumeWaverView.m in Sources */,
 				FC6579162101709400055C91 /* ViewController.m in Sources */,
 				FC6579212101709400055C91 /* main.m in Sources */,
+				FC8B93722106EC1F006F30FF /* CrashManager.m in Sources */,
 				FC8B936F2106B497006F30FF /* GridsView.m in Sources */,
 				FC6579132101709400055C91 /* AppDelegate.m in Sources */,
 			);
