@@ -49,7 +49,7 @@
 - (VolumeWaverView *)volume {
     
     if (_volume == nil) {
-        _volume = [[VolumeWaverView alloc] initWithFrame:CGRectMake(0, 70, 375, 60) andType:VolumeWaverType_Bar];
+        _volume = [[VolumeWaverView alloc] initWithFrame:CGRectMake(10, 70, 355, 60) andType:VolumeWaverType_Bar];
     }
     return _volume;
 }
@@ -65,15 +65,17 @@
     
     self.tableView.tableHeaderView = [self headerView];
     
+    [self.tableView addSubview:self.volume];
     
-    self.soundMeterCount = 20;
+    
+    self.soundMeterCount = Xcount;
     self.updateFequency = 0.25/self.soundMeterCount;
     
 }
 - (UIView *)headerView {
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 375, 200)];
     contentView.backgroundColor = [UIColor whiteColor];
-    [contentView addSubview:self.volume];
+//    [contentView addSubview:self.volume];
     return contentView;
     
 }
@@ -177,7 +179,13 @@
 }
 - (void)cancle {
     
+    [self.timer invalidate];
+    self.timer = nil;
+    [self.recorder stop];
+    
+    
 }
+
 - (void)updateMeters {
     
     [self.recorder updateMeters];
