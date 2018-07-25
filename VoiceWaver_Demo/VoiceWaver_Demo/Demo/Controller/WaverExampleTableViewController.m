@@ -57,6 +57,12 @@
         _recordTool.returnTime = ^(NSTimer *timer,int second) {
 
           weakSelf.timeLabel.text =  [NSString stringWithFormat:@"00:00:%02d", second];
+            
+            if (second == weakSelf.recordTool.maxSecond) {
+                
+                NSLog(@"finished or cancle，file exit is finished");
+                weakSelf.volume.soundMeters = nil;
+            }
         };
 
     }

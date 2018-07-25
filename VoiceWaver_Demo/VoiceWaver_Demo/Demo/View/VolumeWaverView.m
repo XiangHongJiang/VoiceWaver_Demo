@@ -58,6 +58,8 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.contentMode = UIViewContentModeRedraw;
+       
+        //背景色
         self.backgroundColor = [UIColor cyanColor];
         
         //监听声波改变
@@ -74,7 +76,7 @@
 
 - (void)setSoundMeters:(NSArray *)soundMeters {
     
-    if (self.showType == VolumeWaverType_Line || self.showType == VolumeWaverType_BarMove) {
+    if (self.showType == VolumeWaverType_Line || self.showType == VolumeWaverType_BarMove || !soundMeters.count) {
         
         _soundMeters = soundMeters;
         [self setNeedsDisplay];
@@ -120,8 +122,8 @@
         
         CGFloat noVoice = -80.0;// 该值代表低于 x 的声音都认为无声音
         CGFloat maxVolume = 0; // 该值代表最高声音为 x
-   
-        CGFloat range = maxVolume - noVoice;
+     
+        CGFloat range = maxVolume - noVoice;//正常获取的分贝值在 -160 ~0 之间，通常说话声音在 - 50左右。
         
         switch (self.showType) {
             case VolumeWaverType_BarMove:
@@ -187,6 +189,11 @@
         }else {
             [self.gridsView removeFromSuperview];
         }
+        
+    }else {//取消原先的绘制
+        
+        //背景色：自定义设置
+        self.backgroundColor = [UIColor cyanColor];
         
     }
     

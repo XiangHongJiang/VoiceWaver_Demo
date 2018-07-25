@@ -172,6 +172,11 @@ static RecordManager *shareRecord = nil;
     [self.recorder stop];
     self.recordTime = 0;
     self.count = self.maxSecond;
+    
+    if (self.returnTime) {
+        self.returnTime(nil, self.maxSecond);
+    }
+    
 }
 #pragma mark -  Timmer
 - (void)updateMeters {
