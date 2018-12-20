@@ -8,13 +8,13 @@
 
 
 1.跳动的条形图
-![image](https://github.com/XiangHongJiang/VoiceWaver_Demo/blob/master/VoiceWaver_Demo/Pic/Simulator%20Screen%20Shot%20-%20iPhone%20X%20-%202018-07-25%20at%2009.34.46.png)
+<div align=center><img width="200" height="355" src="https://github.com/XiangHongJiang/VoiceWaver_Demo/blob/master/VoiceWaver_Demo/Pic/Simulator%20Screen%20Shot%20-%20iPhone%20X%20-%202018-07-25%20at%2009.34.46.png"/></div>
 
 2.移动的条形图
-![image](https://github.com/XiangHongJiang/VoiceWaver_Demo/blob/master/VoiceWaver_Demo/Pic/Simulator%20Screen%20Shot%20-%20iPhone%20X%20-%202018-07-25%20at%2009.34.53.png)
+<div align=center><img width="200" height="355" src="https://github.com/XiangHongJiang/VoiceWaver_Demo/blob/master/VoiceWaver_Demo/Pic/Simulator%20Screen%20Shot%20-%20iPhone%20X%20-%202018-07-25%20at%2009.34.53.png"/></div>
 
 3.移动的直线图
-![image](https://github.com/XiangHongJiang/VoiceWaver_Demo/blob/master/VoiceWaver_Demo/Pic/Simulator%20Screen%20Shot%20-%20iPhone%20X%20-%202018-07-25%20at%2009.34.55.png)
+<div align=center><img width="200" height="355" src="https://github.com/XiangHongJiang/VoiceWaver_Demo/blob/master/VoiceWaver_Demo/Pic/Simulator%20Screen%20Shot%20-%20iPhone%20X%20-%202018-07-25%20at%2009.34.55.png"/></div>
 
 
 #### 使用说明
