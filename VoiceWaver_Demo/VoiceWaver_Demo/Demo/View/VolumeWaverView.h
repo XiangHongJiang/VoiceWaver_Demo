@@ -18,8 +18,8 @@ typedef NS_ENUM(NSInteger,VolumeWaverType){
 
 @interface VolumeWaverView : UIView
 
-#define Xcount 30
-#define Xmargin 1
+#define Xcount 30  //可修改
+#define Xmargin 1  //可修改
 
 /** 显示类型*/
 @property (nonatomic, assign) VolumeWaverType showType;//bar line

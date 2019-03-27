@@ -73,7 +73,7 @@
     
     self.soundMeters = notice.object;
 }
-
+//赋值后绘图
 - (void)setSoundMeters:(NSArray *)soundMeters {
     
     if (self.showType == VolumeWaverType_Line || self.showType == VolumeWaverType_BarMove || !soundMeters.count) {

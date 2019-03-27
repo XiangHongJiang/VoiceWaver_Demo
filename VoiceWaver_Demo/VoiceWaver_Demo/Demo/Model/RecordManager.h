@@ -12,8 +12,8 @@
 
 typedef NS_ENUM(NSInteger, RecordValuePostType){
     
-    RecordValuePostType_FullCount,//满个数传
-    RecordValuePostType_FullTime,//满时间传：单位时间, 移动视图下传次值
+    RecordValuePostType_FullCount,//满个数传：跳动均衡器传此值
+    RecordValuePostType_FullTime,//满时间传：单位时间, 移动视图下传此值
 };
 
 typedef void (^ReturnTimeCount)(NSTimer *timer,int second);
